@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moodle Category Restructure — BMedSc/MD</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #006DAE;
+    --blue-dark: #004f80;
+    --blue-light: #e8f1f8;
+    --blue-mid: #b8d4e8;
+    --amber: #f59e0b;
+    --amber-light: #fef3c7;
+    --green: #059669;
+    --green-light: #d1fae5;
+    --red: #dc2626;
+    --red-light: #fee2e2;
+    --grey-50: #f9fafb;
+    --grey-100: #f3f4f6;
+    --grey-200: #e5e7eb;
+    --grey-400: #9ca3af;
+    --grey-600: #4b5563;
+    --grey-800: #1f2937;
+    --grey-900: #111827;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--grey-50);
+    color: var(--grey-800);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--blue);
+    color: white;
+    padding: 48px 60px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 40%;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .header-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 12px;
+  }
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 42px;
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 10px;
+  }
+  .header h1 em {
+    font-style: italic;
+    color: rgba(255,255,255,0.75);
+  }
+  .header-sub {
+    font-size: 15px;
+    color: rgba(255,255,255,0.7);
+    font-weight: 300;
+  }
+
+  /* ── TLDR STRIP ── */
+  .tldr {
+    background: var(--grey-900);
+    color: white;
+    padding: 28px 60px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  .tldr-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    background: var(--amber);
+    color: var(--grey-900);
+    padding: 4px 10px;
+    border-radius: 3px;
+    white-space: nowrap;
+    margin-top: 2px;
+    font-weight: 500;
+  }
+  .tldr-text {
+    font-size: 15px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.85);
+    font-weight: 300;
+  }
+  .tldr-text strong {
+    color: white;
+    font-weight: 500;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 52px 60px;
+  }
+
+  /* ── SECTION TITLES ── */
+  .section-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--grey-200);
+  }
+
+  /* ── WHY CHANGE ── */
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 52px;
+  }
+  .why-card {
+    background: white;
+    border: 1px solid var(--grey-200);
+    border-radius: 8px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .why-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--blue);
+  }
+  .why-card.problem::before { background: var(--red); }
+  .why-card.solution::before { background: var(--green); }
+  .why-icon {
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+  .why-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--grey-400);
+    margin-bottom: 8px;
+  }
+  .why-card.problem .why-label { color: var(--red); }
+  .why-card.solution .why-label { color: var(--green); }
+  .why-card h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--grey-900);
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+  .why-card p {
+    font-size: 13px;
+    color: var(--grey-600);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* ── COMPARISON MAP ── */
+  .comparison {
+    display: grid;
+    grid-template-columns: 1fr 56px 1fr;
+    gap: 0;
+    margin-bottom: 52px;
+    align-items: start;
+  }
+  .comp-col {
+    background: white;
+    border: 1px solid var(--grey-200);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .comp-col.before { border-top: 3px solid var(--red); }
+  .comp-col.after  { border-top: 3px solid var(--green); }
+
+  .comp-header {
+    padding: 16px 20px 14px;
+    border-bottom: 1px solid var(--grey-100);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .comp-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-weight: 500;
+  }
+  .before .comp-badge { background: var(--red-light); color: var(--red); }
+  .after  .comp-badge { background: var(--green-light); color: var(--green); }
+  .comp-header span {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--grey-600);
+  }
+
+  .comp-tree {
+    padding: 16px 20px 20px;
+  }
+
+  /* tree nodes */
+  .node {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    position: relative;
+  }
+  .node-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 20px;
+    flex-shrink: 0;
+  }
+  .node-vline {
+    width: 1px;
+    background: var(--grey-200);
+    flex: 1;
+    min-height: 8px;
+  }
+  .node-hline {
+    width: 12px;
+    height: 1px;
+    background: var(--grey-200);
+    margin-top: 10px;
+    flex-shrink: 0;
+  }
+  .node-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--grey-300);
+    margin-top: 8px;
+    flex-shrink: 0;
+  }
+  .node-content {
+    flex: 1;
+    margin-bottom: 4px;
+  }
+
+  .tree-root {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--grey-400);
+    letter-spacing: 0.05em;
+    padding: 4px 0 8px;
+  }
+
+  .tree-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 8px;
+    border-radius: 5px;
+    margin-bottom: 2px;
+    font-size: 12.5px;
+    font-weight: 400;
+    color: var(--grey-700);
+    transition: background 0.15s;
+    cursor: default;
+  }
+  .tree-item:hover { background: var(--grey-50); }
+  .tree-item.level-1 { font-weight: 500; color: var(--grey-900); }
+  .tree-item.level-2 { padding-left: 20px; font-size: 12px; }
+  .tree-item.level-3 { padding-left: 36px; font-size: 11.5px; color: var(--grey-500); }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+  .tag-year  { background: var(--blue-light); color: var(--blue); }
+  .tag-dev   { background: #fef3c7; color: #92400e; font-weight: 500; }
+  .tag-new   { background: var(--green-light); color: var(--green); }
+  .tag-bs    { background: #ede9fe; color: #5b21b6; }
+  .tag-gone  { background: var(--red-light); color: var(--red); text-decoration: line-through; }
+  .tag-note  { background: var(--grey-100); color: var(--grey-500); font-style: italic; }
+
+  .tree-divider {
+    height: 1px;
+    background: var(--grey-100);
+    margin: 6px 0;
+  }
+
+  /* arrow col */
+  .comp-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 60px;
+  }
+  .arrow-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    box-shadow: 0 2px 12px rgba(0,109,174,0.25);
+  }
+
+  /* ── NAMING CONVENTION ── */
+  .naming-box {
+    background: white;
+    border: 1px solid var(--grey-200);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 52px;
+  }
+  .naming-header {
+    background: var(--grey-900);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .naming-header span {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+  }
+  .naming-body {
+    padding: 28px 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .naming-col h4 {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .naming-col.live h4 { color: var(--green); }
+  .naming-col.dev  h4 { color: var(--amber); }
+
+  .course-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    padding: 14px 16px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    word-break: break-word;
+  }
+  .naming-col.live .course-name {
+    background: var(--green-light);
+    color: #064e3b;
+    border: 1px solid #a7f3d0;
+  }
+  .naming-col.dev .course-name {
+    background: var(--amber-light);
+    color: #78350f;
+    border: 1px solid #fde68a;
+  }
+  .course-name .prefix {
+    font-weight: 500;
+    color: #92400e;
+  }
+  .course-name .suffix {
+    color: var(--grey-500);
+    font-style: italic;
+  }
+
+  .formula {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+  }
+  .formula-part {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: var(--grey-100);
+    color: var(--grey-600);
+  }
+  .formula-part.highlight {
+    background: var(--amber-light);
+    color: #92400e;
+    font-weight: 500;
+  }
+  .formula-sep {
+    color: var(--grey-400);
+    font-size: 12px;
+  }
+
+  /* ── GLOSSARY ── */
+  .glossary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+  .gloss-card {
+    background: white;
+    border: 1px solid var(--grey-200);
+    border-radius: 8px;
+    padding: 18px 20px;
+  }
+  .gloss-term {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--blue);
+    margin-bottom: 6px;
+  }
+  .gloss-def {
+    font-size: 12.5px;
+    color: var(--grey-600);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 1px solid var(--grey-200);
+    padding: 20px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    font-size: 11.5px;
+    color: var(--grey-400);
+    font-family: 'DM Mono', monospace;
+  }
+
+  @media print {
+    body { background: white; }
+    .content { padding: 32px 40px; }
+    .header { padding: 32px 40px; }
+    .tldr { padding: 20px 40px; }
+    .footer { padding: 16px 40px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-label">eLearning Team · Monash Medical School · Monash University</div>
+  <h1>Moodle Category Restructure<br><em>What's changing and why</em></h1>
+  <div class="header-sub">Monash Medical School · Faculty of Medicine, Nursing and Health Sciences</div>
+</div>
+
+<!-- TLDR -->
+<div class="tldr">
+  <div class="tldr-badge">TL;DR</div>
+  <div class="tldr-text">
+    We're adding two new structures to the BMedSc/MD Moodle category tree.
+    <strong>DEV</strong> sub-categories within each year level give us a proper home for courses under active development or redevelopment — separate from live student sites.
+    <strong>BACKSTAGE</strong> is a new program-wide category for shared team infrastructure: sandboxes, testing, staff training, and reusable templates.
+    Course names in DEV follow a consistent format: <strong>[DEV] Unit Code &amp; Name - Development Site</strong>.
+    Student Support sits outside this structure — its sites are continuously updated, so no year or DEV sub-categories apply there (for now).
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- WHY CHANGE -->
+  <div class="section-title">Why we're making this change</div>
+  <div class="why-grid">
+    <div class="why-card problem">
+      <div class="why-icon">🔀</div>
+      <div class="why-label">Problem</div>
+      <h3>Dev work mixed with live sites</h3>
+      <p>Courses being redesigned or built from scratch sit in the same category as live student-facing sites, making it hard to know what's in-progress vs. ready to go.</p>
+    </div>
+    <div class="why-card problem">
+      <div class="why-icon">🏚️</div>
+      <div class="why-label">Problem</div>
+      <h3>No shared team workspace</h3>
+      <p>Sandbox sites, staff training courses, and reusable templates are scattered or non-existent. There's nowhere consistent to test tools or store design assets.</p>
+    </div>
+    <div class="why-card solution">
+      <div class="why-icon">✦</div>
+      <div class="why-label">Solution</div>
+      <h3>Clear separation, consistent naming</h3>
+      <p>DEV sub-categories isolate development work per year level. BACKSTAGE centralises team infrastructure. A consistent naming convention makes DEV sites instantly identifiable — even when names are truncated.</p>
+    </div>
+  </div>
+
+  <!-- COMPARISON MAP -->
+  <div class="section-title">Before &amp; After — Category Structure</div>
+  <div class="comparison">
+
+    <!-- BEFORE -->
+    <div class="comp-col before">
+      <div class="comp-header">
+        <span class="comp-badge">Before</span>
+        <span>Current structure</span>
+      </div>
+      <div class="comp-tree">
+        <div class="tree-root">Units › Faculty of Medicine, Nursing and Health Sciences › BMedSc/MD</div>
+
+        <!-- Year 4 example expanded -->
+        <div class="tree-item level-1">📁 Year 4</div>
+        <div class="tree-item level-2"><span class="tag tag-year">2024</span> &nbsp;Year 4 · 2024</div>
+        <div class="tree-item level-2"><span class="tag tag-year">2025</span> &nbsp;Year 4 · 2025</div>
+        <div class="tree-item level-2"><span class="tag tag-year">2026</span> &nbsp;Year 4 · 2026</div>
+        <div class="tree-item level-2" style="color:var(--grey-400); font-style:italic; font-size:11px;">↳ dev courses mixed into year folders</div>
+
+        <div class="tree-divider"></div>
+
+        <div class="tree-item level-1" style="opacity:0.5;">📁 Year A</div>
+        <div class="tree-item level-1" style="opacity:0.5;">📁 Year 1</div>
+        <div class="tree-item level-1" style="opacity:0.5;">📁 Year 2</div>
+        <div class="tree-item level-1" style="opacity:0.5;">📁 Year 3</div>
+        <div class="tree-item level-1" style="opacity:0.5;">📁 Year 5</div>
+        <div class="tree-item level-1" style="opacity:0.5;">📁 Clinical Sites</div>
+        <div class="tree-item level-1" style="opacity:0.5;">📁 BMedSc(Hons)</div>
+
+        <div class="tree-divider"></div>
+
+        <div class="tree-item level-1">📁 Student Support</div>
+        <div class="tree-item level-2"><span class="tag tag-year">2024</span> &nbsp;·&nbsp; <span class="tag tag-year">2025</span> &nbsp;·&nbsp; <span class="tag tag-year">2026</span></div>
+
+        <div class="tree-divider"></div>
+
+        <div class="tree-item level-1" style="color:var(--grey-400);">📁 <em style="font-size:11px;">[no team workspace]</em></div>
+        <div class="tree-item level-2" style="color:var(--grey-400); font-size:11px; font-style:italic;">sandboxes scattered / informal</div>
+
+      </div>
+    </div>
+
+    <!-- ARROW -->
+    <div class="comp-arrow">
+      <div class="arrow-circle">→</div>
+    </div>
+
+    <!-- AFTER -->
+    <div class="comp-col after">
+      <div class="comp-header">
+        <span class="comp-badge">After</span>
+        <span>Proposed structure</span>
+      </div>
+      <div class="comp-tree">
+        <div class="tree-root">Units › Faculty of Medicine, Nursing and Health Sciences › BMedSc/MD</div>
+
+        <!-- Year 4 example expanded -->
+        <div class="tree-item level-1">📁 Year 4</div>
+        <div class="tree-item level-2"><span class="tag tag-year">2024</span> &nbsp;Year 4 · 2024</div>
+        <div class="tree-item level-2"><span class="tag tag-year">2025</span> &nbsp;Year 4 · 2025</div>
+        <div class="tree-item level-2"><span class="tag tag-year">2026</span> &nbsp;Year 4 · 2026</div>
+        <div class="tree-item level-2"><span class="tag tag-dev">DEV</span> &nbsp;<strong style="font-size:11.5px;">[DEV] MED4100 &amp; MED4200 - General Practice - Development Site</strong></div>
+
+        <div class="tree-divider"></div>
+
+        <div class="tree-item level-1" style="opacity:0.5;">📁 Year A &nbsp;<span class="tag tag-new" style="opacity:0.7;">+ DEV</span></div>
+        <div class="tree-item level-1" style="opacity:0.5;">📁 Year 1 &nbsp;<span class="tag tag-new" style="opacity:0.7;">+ DEV</span></div>
+        <div class="tree-item level-1" style="opacity:0.5;">📁 Year 2 &nbsp;<span class="tag tag-new" style="opacity:0.7;">+ DEV</span></div>
+        <div class="tree-item level-1" style="opacity:0.5;">📁 Year 3 &nbsp;<span class="tag tag-new" style="opacity:0.7;">+ DEV</span></div>
+        <div class="tree-item level-1" style="opacity:0.5;">📁 Year 5 &nbsp;<span class="tag tag-new" style="opacity:0.7;">+ DEV</span></div>
+        <div class="tree-item level-1" style="opacity:0.5;">📁 Clinical Sites &nbsp;<span class="tag tag-new" style="opacity:0.7;">+ DEV</span></div>
+        <div class="tree-item level-1" style="opacity:0.5;">📁 BMedSc(Hons) &nbsp;<span class="tag tag-new" style="opacity:0.7;">+ DEV</span></div>
+
+        <div class="tree-divider"></div>
+
+        <div class="tree-item level-1">📁 Student Support</div>
+        <div class="tree-item level-2" style="font-size:11px; color:var(--grey-500); font-style:italic;">continuously updated — no year or DEV sub-categories</div>
+
+        <div class="tree-divider"></div>
+
+        <div class="tree-item level-1" style="color:#5b21b6; font-weight:600;">📁 <span class="tag tag-bs">BACKSTAGE</span> &nbsp;NEW</div>
+        <div class="tree-item level-2"><span class="tag tag-bs">LAB</span> &nbsp;sandboxes · testing · staff training</div>
+        <div class="tree-item level-2"><span class="tag tag-bs">TOOLKIT</span> &nbsp;templates · exemplars</div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- NAMING CONVENTION -->
+  <div class="section-title">Course naming convention — DEV sites</div>
+  <div class="naming-box">
+    <div class="naming-header">
+      <span>Naming format</span>
+      <span>Consistent across all DEV sub-categories</span>
+    </div>
+    <div class="naming-body">
+      <div class="naming-col live">
+        <h4>Live course (example)</h4>
+        <div class="course-name">
+          MED4100 &amp; MED4200 - Specialty &amp; Integrated Clinical - FY 2026
+        </div>
+        <div class="formula">
+          <span class="formula-part">Unit code &amp; name</span>
+          <span class="formula-sep">—</span>
+          <span class="formula-part">FY [Year]</span>
+        </div>
+      </div>
+      <div class="naming-col dev">
+        <h4>DEV course (equivalent)</h4>
+        <div class="course-name">
+          <span class="prefix">[DEV]</span> MED4100 &amp; MED4200 - General Practice - <span class="suffix">Development Site</span>
+        </div>
+        <div class="formula">
+          <span class="formula-part highlight">[DEV]</span>
+          <span class="formula-sep">+</span>
+          <span class="formula-part">Unit code &amp; name</span>
+          <span class="formula-sep">+</span>
+          <span class="formula-part highlight">Development Site</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GLOSSARY -->
+  <div class="section-title">Quick reference — what lives where</div>
+  <div class="glossary">
+    <div class="gloss-card">
+      <div class="gloss-term">Year X › 20XX</div>
+      <div class="gloss-def">Live, student-facing course sites for a specific delivery year. Visible to enrolled students.</div>
+    </div>
+    <div class="gloss-card">
+      <div class="gloss-term">Year X › DEV</div>
+      <div class="gloss-def">Active development and redevelopment work for that year level. Staff only. Named with [DEV] prefix and Development Site suffix.</div>
+    </div>
+    <div class="gloss-card">
+      <div class="gloss-term">BACKSTAGE › LAB</div>
+      <div class="gloss-def">Team sandboxes, tool testing, and staff training courses. Safe to experiment — nothing here is live.</div>
+    </div>
+    <div class="gloss-card">
+      <div class="gloss-term">BACKSTAGE › TOOLKIT</div>
+      <div class="gloss-def">Polished, production-ready templates and exemplar course sites for reuse across the program.</div>
+    </div>
+    <div class="gloss-card">
+      <div class="gloss-term">Student Support</div>
+      <div class="gloss-def">Continuously updated sites with no year cohort structure. Sits outside the DEV/year framework for now.</div>
+    </div>
+    <div class="gloss-card" style="background:var(--blue-light); border-color: var(--blue-mid);">
+      <div class="gloss-term" style="color:var(--blue-dark);">First live example</div>
+      <div class="gloss-def" style="color:var(--blue-dark);">[DEV] MED4100 &amp; MED4200 - General Practice - Development Site — now in Year 4 › DEV.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>eLearning Team · Monash Medical School · Monash University</span>
+  <span>Version 1.0 · For internal team use</span>
+</div>
+
+</body>
+</html>
